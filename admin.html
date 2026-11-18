@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Panel - Order CCTV</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body class="bg-slate-100 text-slate-800 font-sans">
+
+  <nav class="bg-slate-900 text-white py-4 px-6 shadow">
+    <div class="max-w-6xl mx-auto flex justify-between items-center">
+      <div class="font-bold text-lg text-sky-400">ADMIN PANEL <span class="text-white font-normal">| Order Pemasangan CCTV</span></div>
+      <a href="index.html" class="text-xs bg-slate-800 hover:bg-slate-700 px-3 py-1.5 rounded">← Ke Halaman Utama</a>
+    </div>
+  </nav>
+
+  <main class="max-w-6xl mx-auto py-8 px-6">
+    <div class="flex justify-between items-center mb-6">
+      <h1 class="text-2xl font-bold">Daftar Permintaan Klien</h1>
+      <button onclick="fetchOrders()" class="bg-sky-600 hover:bg-sky-700 text-white text-sm px-4 py-2 rounded-lg shadow">Refresh Data</button>
+    </div>
+
+    <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-x-auto">
+      <table class="w-full text-left border-collapse">
+        <thead>
+          <tr class="bg-slate-50 border-b border-slate-200 text-xs uppercase text-slate-500">
+            <th class="p-4">Tanggal</th>
+            <th class="p-4">Klien & Lokasi</th>
+            <th class="p-4">Spesifikasi</th>
+            <th class="p-4">Estimasi Biaya</th>
+            <th class="p-4">Status Pengerjaan</th>
+            <th class="p-4">Aksi</th>
+          </tr>
+        </thead>
+        <tbody id="ordersTable" class="divide-y divide-slate-200 text-sm">
+          <tr><td colspan="6" class="p-6 text-center text-slate-400">Memuat data pesanan...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </main>
+
+  <script>
+    // GANTI DENGAN CREDENTIALS SUPABASE KAMU
+    const SUPABASE_URL = 'https://YOUR_PROJECT_ID.supabase.co';
+    const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    function formatRupiah(angka) {
+      return 'Rp ' + angka.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+    }
+
+    async function fetchOrders() {
+      const { data, error } = await supabaseClient
+        .from('cctv_orders')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      const tbody = document.getElementById('ordersTable');
+      if (error) {
+        tbody.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-red-500">Error: ${error.message}</td></tr>`;
+        return;
+      }
+
+      if (!data || data.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-slate-400">Belum ada pesanan masuk.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = data.map(order => {
+        const date = new Date(order.created_at).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' });
+        const waNumber = order.whatsapp.replace(/^0/, '62').replace(/[^0-9]/g, '');
+        const waText = encodeURIComponent(`Halo Kak ${order.customer_name}, kami dari tim teknisi CCTV menindaklanjuti permintaan pemasangan ${order.camera_count} titik di ${order.location}.`);
+
+        return `
+          <tr class="hover:bg-slate-50">
+            <td class="p-4 whitespace-nowrap text-slate-500">${date}</td>
+            <td class="p-4">
+              <div class="font-bold text-slate-900">${order.customer_name}</div>
+              <div class="text-xs text-slate-500">${order.property_type} • ${order.location}</div>
+              ${order.notes ? `<div class="text-xs text-amber-700 bg-amber-50 px-2 py-0.5 rounded mt-1 inline-block">Catatan: ${order.notes}</div>` : ''}
+            </td>
+            <td class="p-4">
+              <div class="font-medium">${order.camera_count} Titik Kamera</div>
+              <div class="text-xs text-slate-500">${order.camera_type}</div>
+              ${order.cable_length > 0 ? `<div class="text-xs text-slate-400">+ Kabel ${order.cable_length}m</div>` : ''}
+            </td>
+            <td class="p-4 font-bold text-sky-700 whitespace-nowrap">${formatRupiah(order.estimated_price)}</td>
+            <td class="p-4">
+              <select onchange="updateStatus('${order.id}', this.value)" class="border border-slate-300 rounded px-2.5 py-1 text-xs font-medium bg-white">
+                <option value="Baru" ${order.status === 'Baru' ? 'selected' : ''}>Baru</option>
+                <option value="Jadwal Survei" ${order.status === 'Jadwal Survei' ? 'selected' : ''}>Jadwal Survei</option>
+                <option value="Proses Pasang" ${order.status === 'Proses Pasang' ? 'selected' : ''}>Proses Pasang</option>
+                <option value="Selesai" ${order.status === 'Selesai' ? 'selected' : ''}>Selesai</option>
+                <option value="Batal" ${order.status === 'Batal' ? 'selected' : ''}>Batal</option>
+              </select>
+            </td>
+            <td class="p-4 whitespace-nowrap">
+              <a href="https://wa.me/${waNumber}?text=${waText}" target="_blank" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs px-3 py-1.5 rounded inline-block">
+                Chat WA
+              </a>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    async function updateStatus(id, newStatus) {
+      const { error } = await supabaseClient
+        .from('cctv_orders')
+        .update({ status: newStatus })
+        .eq('id', id);
+
+      if (error) {
+        alert('Gagal update status: ' + error.message);
+      }
+    }
+
+    fetchOrders();
+  </script>
+</body>
+</html>
