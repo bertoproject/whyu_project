@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Jasa Pasang CCTV Profesional</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans">
+
+  <!-- Navbar -->
+  <nav class="bg-slate-900 text-white py-4 px-6 shadow-md">
+    <div class="max-w-5xl mx-auto flex justify-between items-center">
+      <div class="font-bold text-xl tracking-wide text-sky-400">SECURE<span class="text-white">VISION</span></div>
+      <a href="admin.html" class="text-xs bg-slate-800 hover:bg-slate-700 px-3 py-1.5 rounded border border-slate-700">Login Admin</a>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <header class="bg-slate-900 text-white py-14 px-6 border-b border-slate-800">
+    <div class="max-w-5xl mx-auto text-center">
+      <h1 class="text-3xl md:text-5xl font-extrabold mb-4 leading-tight">Instalasi CCTV Rapi, Bergaransi & Pantau dari HP</h1>
+      <p class="text-slate-300 max-w-2xl mx-auto text-base md:text-lg">Layanan pemasangan kamera pengawas untuk Rumah, Villa, Ruko, dan Gudang. Hitung estimasi biaya pemasangan Anda secara instan di bawah ini.</p>
+    </div>
+  </header>
+
+  <!-- Main Content: Kalkulator & Form Pemesanan -->
+  <main class="max-w-5xl mx-auto py-10 px-6 grid grid-cols-1 md:grid-cols-12 gap-8">
+    
+    <!-- Kolom Kiri: Kalkulator Paket -->
+    <div class="md:col-span-7 bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+      <h2 class="text-xl font-bold mb-1">1. Simulasi Kebutuhan CCTV</h2>
+      <p class="text-sm text-slate-500 mb-6">Sesuaikan jumlah kamera dan kebutuhan instalasi Anda.</p>
+
+      <div class="space-y-5">
+        <div>
+          <label class="block text-sm font-medium mb-1">Jenis Properti</label>
+          <select id="propertyType" class="w-full border border-slate-300 rounded-lg p-2.5 bg-white">
+            <option value="Rumah Tinggal">Rumah Tinggal</option>
+            <option value="Toko / Ruko">Toko / Ruko</option>
+            <option value="Villa / Penginapan">Villa / Penginapan</option>
+            <option value="Gudang / Kantor">Gudang / Kantor</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium mb-1">Tipe Kamera</label>
+          <select id="cameraType" onchange="calculateTotal()" class="w-full border border-slate-300 rounded-lg p-2.5 bg-white">
+            <option value="Paket 2MP Full HD (Rp 650rb/titik)" data-price="650000">Paket 2MP Full HD (Rp 650.000 / titik + Jasa)</option>
+            <option value="Paket 5MP Ultra HD (Rp 850rb/titik)" data-price="850000">Paket 5MP Ultra HD (Rp 850.000 / titik + Jasa)</option>
+            <option value="Paket IP Camera PoE (Rp 1.1jt/titik)" data-price="1100000">Paket IP Camera PoE (Rp 1.100.000 / titik + Jasa)</option>
+            <option value="Jasa Pasang Saja (Rp 250rb/titik)" data-price="250000">Jasa Pasang Saja / Perangkat Milik Sendiri (Rp 250.000 / titik)</option>
+          </select>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-medium mb-1">Jumlah Kamera (Titik)</label>
+            <input type="number" id="cameraCount" value="4" min="1" max="64" oninput="calculateTotal()" class="w-full border border-slate-300 rounded-lg p-2.5" />
+          </div>
+          <div>
+            <label class="block text-sm font-medium mb-1">Estimasi Kabel Tambahan (Meter)</label>
+            <input type="number" id="cableLength" value="0" min="0" step="10" oninput="calculateTotal()" class="w-full border border-slate-300 rounded-lg p-2.5" />
+            <span class="text-xs text-slate-400">Free 15m/kamera. Tambahan Rp 8.000/m</span>
+          </div>
+        </div>
+
+        <div class="bg-sky-50 border border-sky-200 rounded-lg p-4 flex justify-between items-center">
+          <div>
+            <div class="text-xs uppercase font-semibold text-sky-700">Estimasi Total Biaya</div>
+            <div class="text-xs text-slate-500">*Sudah termasuk setting online ke HP</div>
+          </div>
+          <div id="totalDisplay" class="text-2xl font-extrabold text-sky-700">Rp 2.600.000</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Kolom Kanan: Data Pemesan -->
+    <div class="md:col-span-5 bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+      <h2 class="text-xl font-bold mb-1">2. Jadwalkan Survei / Pasang</h2>
+      <p class="text-sm text-slate-500 mb-6">Tim teknisi kami akan segera menghubungi Anda.</p>
+
+      <form id="orderForm" class="space-y-4">
+        <div>
+          <label class="block text-sm font-medium mb-1">Nama Lengkap</label>
+          <input type="text" id="customerName" required placeholder="Contoh: Budi Santoso" class="w-full border border-slate-300 rounded-lg p-2.5" />
+        </div>
+        <div>
+          <label class="block text-sm font-medium mb-1">Nomor WhatsApp</label>
+          <input type="tel" id="whatsapp" required placeholder="081234567890" class="w-full border border-slate-300 rounded-lg p-2.5" />
+        </div>
+        <div>
+          <label class="block text-sm font-medium mb-1">Alamat / Lokasi Pemasangan</label>
+          <input type="text" id="location" required placeholder="Kecamatan / Area" class="w-full border border-slate-300 rounded-lg p-2.5" />
+        </div>
+        <div>
+          <label class="block text-sm font-medium mb-1">Catatan Tambahan (Opsional)</label>
+          <textarea id="notes" rows="2" placeholder="Contoh: Minta jadwal survei hari Sabtu pagi" class="w-full border border-slate-300 rounded-lg p-2.5"></textarea>
+        </div>
+
+        <button type="submit" id="submitBtn" class="w-full bg-sky-600 hover:bg-sky-700 text-white font-semibold py-3 rounded-lg transition shadow">
+          Kirim Permintaan Pemasangan
+        </button>
+      </form>
+    </div>
+
+  </main>
+
+  <script>
+    // GANTI DENGAN CREDENTIALS SUPABASE KAMU
+    const SUPABASE_URL = 'https://YOUR_PROJECT_ID.supabase.co';
+    const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    let currentTotal = 2600000;
+
+    function formatRupiah(angka) {
+      return 'Rp ' + angka.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+    }
+
+    function calculateTotal() {
+      const select = document.getElementById('cameraType');
+      const pricePerCam = parseInt(select.options[select.selectedIndex].getAttribute('data-price'));
+      const count = parseInt(document.getElementById('cameraCount').value) || 0;
+      const extraCable = parseInt(document.getElementById('cableLength').value) || 0;
+
+      currentTotal = (pricePerCam * count) + (extraCable * 8000);
+      document.getElementById('totalDisplay').innerText = formatRupiah(currentTotal);
+    }
+
+    document.getElementById('orderForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = document.getElementById('submitBtn');
+      btn.disabled = true;
+      btn.innerText = 'Mengirim data...';
+
+      const payload = {
+        customer_name: document.getElementById('customerName').value,
+        whatsapp: document.getElementById('whatsapp').value,
+        location: document.getElementById('location').value,
+        property_type: document.getElementById('propertyType').value,
+        camera_type: document.getElementById('cameraType').value,
+        camera_count: parseInt(document.getElementById('cameraCount').value),
+        cable_length: parseInt(document.getElementById('cableLength').value) || 0,
+        estimated_price: currentTotal,
+        notes: document.getElementById('notes').value
+      };
+
+      const { error } = await supabaseClient.from('cctv_orders').insert([payload]);
+
+      if (error) {
+        alert('Gagal mengirim pesanan: ' + error.message);
+      } else {
+        alert('Terima kasih! Permintaan pemasangan CCTV Anda telah tercatat. Tim kami akan segera menghubungi via WhatsApp.');
+        document.getElementById('orderForm').reset();
+        calculateTotal();
+      }
+
+      btn.disabled = false;
+      btn.innerText = 'Kirim Permintaan Pemasangan';
+    });
+
+    calculateTotal();
+  </script>
+</body>
+</html>
