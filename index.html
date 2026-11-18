@@ -3,137 +3,455 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Jasa Pasang CCTV Profesional</title>
+  <title>CCTV Pro — Dashboard Manajemen Instalasi</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+  </style>
 </head>
-<body class="bg-slate-50 text-slate-800 font-sans">
+<body class="bg-slate-100 text-slate-800 antialiased">
 
-  <!-- Navbar -->
-  <nav class="bg-slate-900 text-white py-4 px-6 shadow-md">
-    <div class="max-w-5xl mx-auto flex justify-between items-center">
-      <div class="font-bold text-xl tracking-wide text-sky-400">SECURE<span class="text-white">VISION</span></div>
-      <a href="admin.html" class="text-xs bg-slate-800 hover:bg-slate-700 px-3 py-1.5 rounded border border-slate-700">Login Admin</a>
-    </div>
-  </nav>
-
-  <!-- Hero Section -->
-  <header class="bg-slate-900 text-white py-14 px-6 border-b border-slate-800">
-    <div class="max-w-5xl mx-auto text-center">
-      <h1 class="text-3xl md:text-5xl font-extrabold mb-4 leading-tight">Instalasi CCTV Rapi, Bergaransi & Pantau dari HP</h1>
-      <p class="text-slate-300 max-w-2xl mx-auto text-base md:text-lg">Layanan pemasangan kamera pengawas untuk Rumah, Villa, Ruko, dan Gudang. Hitung estimasi biaya pemasangan Anda secara instan di bawah ini.</p>
-    </div>
-  </header>
-
-  <!-- Main Content: Kalkulator & Form Pemesanan -->
-  <main class="max-w-5xl mx-auto py-10 px-6 grid grid-cols-1 md:grid-cols-12 gap-8">
+  <div class="min-h-screen flex flex-col md:flex-row">
     
-    <!-- Kolom Kiri: Kalkulator Paket -->
-    <div class="md:col-span-7 bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-      <h2 class="text-xl font-bold mb-1">1. Simulasi Kebutuhan CCTV</h2>
-      <p class="text-sm text-slate-500 mb-6">Sesuaikan jumlah kamera dan kebutuhan instalasi Anda.</p>
+    <!-- Sidebar Navigasi -->
+    <aside class="w-full md:w-64 bg-slate-900 text-slate-300 flex flex-col justify-between shrink-0">
+      <div>
+        <div class="p-6 border-b border-slate-800 flex items-center gap-3">
+          <div class="w-9 h-9 rounded-lg bg-sky-500 flex items-center justify-center text-white font-bold shadow-lg shadow-sky-500/30">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+          </div>
+          <div>
+            <div class="font-bold text-white tracking-wide leading-none">CCTV<span class="text-sky-400">OPS</span></div>
+            <div class="text-[11px] text-slate-400 mt-1">Service & Installation</div>
+          </div>
+        </div>
 
-      <div class="space-y-5">
+        <nav class="p-4 space-y-1.5 text-sm">
+          <button onclick="setFilter('ALL')" id="nav-ALL" class="nav-btn w-full flex items-center justify-between px-3.5 py-2.5 rounded-lg bg-sky-600 text-white font-medium transition">
+            <span class="flex items-center gap-2.5">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+              Semua Proyek
+            </span>
+            <span id="badge-ALL" class="text-xs bg-slate-800/80 px-2 py-0.5 rounded-full">0</span>
+          </button>
+
+          <button onclick="setFilter('Baru')" id="nav-Baru" class="nav-btn w-full flex items-center justify-between px-3.5 py-2.5 rounded-lg hover:bg-slate-800 transition">
+            <span class="flex items-center gap-2.5">
+              <span class="w-2 h-2 rounded-full bg-amber-400"></span>
+              Order Baru
+            </span>
+            <span id="badge-Baru" class="text-xs bg-slate-800 px-2 py-0.5 rounded-full">0</span>
+          </button>
+
+          <button onclick="setFilter('Jadwal Survei')" id="nav-Jadwal Survei" class="nav-btn w-full flex items-center justify-between px-3.5 py-2.5 rounded-lg hover:bg-slate-800 transition">
+            <span class="flex items-center gap-2.5">
+              <span class="w-2 h-2 rounded-full bg-purple-400"></span>
+              Jadwal Survei
+            </span>
+            <span id="badge-Survei" class="text-xs bg-slate-800 px-2 py-0.5 rounded-full">0</span>
+          </button>
+
+          <button onclick="setFilter('Proses Pasang')" id="nav-Proses Pasang" class="nav-btn w-full flex items-center justify-between px-3.5 py-2.5 rounded-lg hover:bg-slate-800 transition">
+            <span class="flex items-center gap-2.5">
+              <span class="w-2 h-2 rounded-full bg-sky-400"></span>
+              Proses Pasang
+            </span>
+            <span id="badge-Pasang" class="text-xs bg-slate-800 px-2 py-0.5 rounded-full">0</span>
+          </button>
+
+          <button onclick="setFilter('Selesai')" id="nav-Selesai" class="nav-btn w-full flex items-center justify-between px-3.5 py-2.5 rounded-lg hover:bg-slate-800 transition">
+            <span class="flex items-center gap-2.5">
+              <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+              Selesai
+            </span>
+            <span id="badge-Selesai" class="text-xs bg-slate-800 px-2 py-0.5 rounded-full">0</span>
+          </button>
+        </nav>
+      </div>
+
+      <div class="p-4 border-t border-slate-800">
+        <div class="bg-slate-800/70 rounded-lg p-3 text-xs">
+          <div class="text-slate-400">Status Database</div>
+          <div class="flex items-center gap-2 mt-1 text-emerald-400 font-medium">
+            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+            Supabase Connected
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Area Konten Utama -->
+    <div class="flex-1 flex flex-col">
+      
+      <!-- Top Header -->
+      <header class="bg-white border-b border-slate-200 px-6 py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <label class="block text-sm font-medium mb-1">Jenis Properti</label>
-          <select id="propertyType" class="w-full border border-slate-300 rounded-lg p-2.5 bg-white">
-            <option value="Rumah Tinggal">Rumah Tinggal</option>
-            <option value="Toko / Ruko">Toko / Ruko</option>
-            <option value="Villa / Penginapan">Villa / Penginapan</option>
-            <option value="Gudang / Kantor">Gudang / Kantor</option>
-          </select>
+          <h1 class="text-xl font-bold text-slate-900">Dashboard Operasional & Order</h1>
+          <p class="text-xs text-slate-500">Pantau survei lokasi, estimasi RAB, dan progres instalasi kamera</p>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <button onclick="fetchOrders()" class="p-2.5 text-slate-600 hover:bg-slate-100 rounded-lg border border-slate-200 transition" title="Refresh Data">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+          </button>
+          <button onclick="openModal()" class="bg-sky-600 hover:bg-sky-700 text-white text-sm font-medium px-4 py-2.5 rounded-lg shadow-sm flex items-center gap-2 transition">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+            Input Order Baru
+          </button>
+        </div>
+      </header>
+
+      <!-- Main Workspace -->
+      <main class="p-6 space-y-6 max-w-7xl w-full mx-auto">
+
+        <!-- KPI Summary Cards -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+            <div class="flex justify-between items-start">
+              <div>
+                <p class="text-xs font-medium text-slate-500 uppercase">Total Estimasi Omzet</p>
+                <h3 id="statRevenue" class="text-2xl font-bold text-slate-900 mt-1">Rp 0</h3>
+              </div>
+              <div class="p-2.5 bg-emerald-50 text-emerald-600 rounded-lg">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+              </div>
+            </div>
+            <p class="text-xs text-slate-400 mt-2">Akumulasi proyek aktif & selesai</p>
+          </div>
+
+          <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+            <div class="flex justify-between items-start">
+              <div>
+                <p class="text-xs font-medium text-slate-500 uppercase">Total Titik Kamera</p>
+                <h3 id="statCameras" class="text-2xl font-bold text-slate-900 mt-1">0 Titik</h3>
+              </div>
+              <div class="p-2.5 bg-sky-50 text-sky-600 rounded-lg">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+              </div>
+            </div>
+            <p class="text-xs text-slate-400 mt-2">Total unit kamera terorder</p>
+          </div>
+
+          <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+            <div class="flex justify-between items-start">
+              <div>
+                <p class="text-xs font-medium text-slate-500 uppercase">Perlu Tindakan</p>
+                <h3 id="statPending" class="text-2xl font-bold text-amber-600 mt-1">0 Proyek</h3>
+              </div>
+              <div class="p-2.5 bg-amber-50 text-amber-600 rounded-lg">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+              </div>
+            </div>
+            <p class="text-xs text-slate-400 mt-2">Status Baru & Jadwal Survei</p>
+          </div>
+
+          <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+            <div class="flex justify-between items-start">
+              <div>
+                <p class="text-xs font-medium text-slate-500 uppercase">Proyek Selesai</p>
+                <h3 id="statCompleted" class="text-2xl font-bold text-slate-900 mt-1">0 Proyek</h3>
+              </div>
+              <div class="p-2.5 bg-indigo-50 text-indigo-600 rounded-lg">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+              </div>
+            </div>
+            <p class="text-xs text-slate-400 mt-2">Instalasi & setting HP beres</p>
+          </div>
+        </div>
+
+        <!-- Filter & Search Bar -->
+        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col sm:flex-row justify-between gap-4">
+          <div class="relative flex-1">
+            <svg class="w-4 h-4 text-slate-400 absolute left-3.5 top-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+            <input type="text" id="searchInput" oninput="renderTable()" placeholder="Cari nama klien, lokasi proyek, atau tipe kamera..." class="w-full pl-10 pr-4 py-2 text-sm border border-slate-300 rounded-lg focus:outline-none focus:border-sky-500" />
+          </div>
+          <div class="flex items-center gap-2 text-xs text-slate-500">
+            <span>Filter Aktif:</span>
+            <span id="activeFilterLabel" class="font-semibold text-slate-800 bg-slate-100 px-2.5 py-1 rounded">Semua Proyek</span>
+          </div>
+        </div>
+
+        <!-- Tabel Data Proyek -->
+        <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+          <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+              <thead>
+                <tr class="bg-slate-50 border-b border-slate-200 text-[11px] font-semibold uppercase tracking-wider text-slate-500">
+                  <th class="py-3.5 px-4">Klien & Lokasi</th>
+                  <th class="py-3.5 px-4">Spesifikasi Paket</th>
+                  <th class="py-3.5 px-4">Nilai Proyek</th>
+                  <th class="py-3.5 px-4">Status</th>
+                  <th class="py-3.5 px-4 text-right">Tindakan</th>
+                </tr>
+              </thead>
+              <tbody id="ordersTableBody" class="divide-y divide-slate-200 text-sm">
+                <tr>
+                  <td colspan="5" class="p-8 text-center text-slate-400">Menghubungkan ke Supabase...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- MODAL INPUT ORDER BARU & KALKULATOR RAB -->
+  <div id="orderModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
+    <div class="bg-white rounded-2xl max-w-lg w-full shadow-2xl border border-slate-200 overflow-hidden">
+      <div class="px-6 py-4 bg-slate-900 text-white flex justify-between items-center">
+        <h3 class="font-bold text-base">Buat Order & Kalkulasi RAB Baru</h3>
+        <button onclick="closeModal()" class="text-slate-400 hover:text-white text-xl leading-none">&times;</button>
+      </div>
+
+      <form id="newOrderForm" class="p-6 space-y-4 max-h-[85vh] overflow-y-auto">
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">Nama Klien / PIC</label>
+            <input type="text" id="customerName" required placeholder="Bapak Wayan / Villa X" class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm" />
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">No. WhatsApp</label>
+            <input type="tel" id="whatsapp" required placeholder="08123456789" class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm" />
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">Jenis Properti</label>
+            <select id="propertyType" class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm bg-white">
+              <option value="Villa / Penginapan">Villa / Penginapan</option>
+              <option value="Toko / Ruko">Toko / Ruko</option>
+              <option value="Rumah Tinggal">Rumah Tinggal</option>
+              <option value="Gudang / Kantor">Gudang / Kantor</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">Lokasi / Area</label>
+            <input type="text" id="location" required placeholder="Canggu / Denpasar" class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm" />
+          </div>
         </div>
 
         <div>
-          <label class="block text-sm font-medium mb-1">Tipe Kamera</label>
-          <select id="cameraType" onchange="calculateTotal()" class="w-full border border-slate-300 rounded-lg p-2.5 bg-white">
-            <option value="Paket 2MP Full HD (Rp 650rb/titik)" data-price="650000">Paket 2MP Full HD (Rp 650.000 / titik + Jasa)</option>
-            <option value="Paket 5MP Ultra HD (Rp 850rb/titik)" data-price="850000">Paket 5MP Ultra HD (Rp 850.000 / titik + Jasa)</option>
-            <option value="Paket IP Camera PoE (Rp 1.1jt/titik)" data-price="1100000">Paket IP Camera PoE (Rp 1.100.000 / titik + Jasa)</option>
-            <option value="Jasa Pasang Saja (Rp 250rb/titik)" data-price="250000">Jasa Pasang Saja / Perangkat Milik Sendiri (Rp 250.000 / titik)</option>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Paket / Sistem Kamera</label>
+          <select id="cameraType" onchange="calculateRAB()" class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm bg-white">
+            <option value="Paket 2MP Full HD" data-price="650000">Paket 2MP Full HD (Rp 650.000 / titik)</option>
+            <option value="Paket 5MP Ultra HD" data-price="850000">Paket 5MP Ultra HD (Rp 850.000 / titik)</option>
+            <option value="Paket IP Camera PoE" data-price="1150000">Paket IP Camera PoE (Rp 1.150.000 / titik)</option>
+            <option value="Jasa Pasang & Setting Saja" data-price="250000">Jasa Pasang & Setting Saja (Rp 250.000 / titik)</option>
           </select>
         </div>
 
         <div class="grid grid-cols-2 gap-4">
           <div>
-            <label class="block text-sm font-medium mb-1">Jumlah Kamera (Titik)</label>
-            <input type="number" id="cameraCount" value="4" min="1" max="64" oninput="calculateTotal()" class="w-full border border-slate-300 rounded-lg p-2.5" />
+            <label class="block text-xs font-semibold text-slate-600 mb-1">Jumlah Kamera (Titik)</label>
+            <input type="number" id="cameraCount" value="4" min="1" oninput="calculateRAB()" class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm" />
           </div>
           <div>
-            <label class="block text-sm font-medium mb-1">Estimasi Kabel Tambahan (Meter)</label>
-            <input type="number" id="cableLength" value="0" min="0" step="10" oninput="calculateTotal()" class="w-full border border-slate-300 rounded-lg p-2.5" />
-            <span class="text-xs text-slate-400">Free 15m/kamera. Tambahan Rp 8.000/m</span>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">Ekstra Kabel (Meter)</label>
+            <input type="number" id="cableLength" value="0" min="0" step="10" oninput="calculateRAB()" class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm" />
           </div>
         </div>
 
-        <div class="bg-sky-50 border border-sky-200 rounded-lg p-4 flex justify-between items-center">
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Catatan Teknis / Survei</label>
+          <textarea id="notes" rows="2" placeholder="Contoh: Butuh tarikan kabel outdoor + box panel" class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm"></textarea>
+        </div>
+
+        <div class="bg-sky-50 border border-sky-200 rounded-xl p-4 flex justify-between items-center">
           <div>
-            <div class="text-xs uppercase font-semibold text-sky-700">Estimasi Total Biaya</div>
-            <div class="text-xs text-slate-500">*Sudah termasuk setting online ke HP</div>
+            <span class="text-xs font-semibold text-sky-800 uppercase">Total Estimasi RAB</span>
+            <p class="text-[11px] text-sky-600">Kabel tambahan dihitung Rp 8.000/m</p>
           </div>
-          <div id="totalDisplay" class="text-2xl font-extrabold text-sky-700">Rp 2.600.000</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Kolom Kanan: Data Pemesan -->
-    <div class="md:col-span-5 bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-      <h2 class="text-xl font-bold mb-1">2. Jadwalkan Survei / Pasang</h2>
-      <p class="text-sm text-slate-500 mb-6">Tim teknisi kami akan segera menghubungi Anda.</p>
-
-      <form id="orderForm" class="space-y-4">
-        <div>
-          <label class="block text-sm font-medium mb-1">Nama Lengkap</label>
-          <input type="text" id="customerName" required placeholder="Contoh: Budi Santoso" class="w-full border border-slate-300 rounded-lg p-2.5" />
-        </div>
-        <div>
-          <label class="block text-sm font-medium mb-1">Nomor WhatsApp</label>
-          <input type="tel" id="whatsapp" required placeholder="081234567890" class="w-full border border-slate-300 rounded-lg p-2.5" />
-        </div>
-        <div>
-          <label class="block text-sm font-medium mb-1">Alamat / Lokasi Pemasangan</label>
-          <input type="text" id="location" required placeholder="Kecamatan / Area" class="w-full border border-slate-300 rounded-lg p-2.5" />
-        </div>
-        <div>
-          <label class="block text-sm font-medium mb-1">Catatan Tambahan (Opsional)</label>
-          <textarea id="notes" rows="2" placeholder="Contoh: Minta jadwal survei hari Sabtu pagi" class="w-full border border-slate-300 rounded-lg p-2.5"></textarea>
+          <div id="modalTotalDisplay" class="text-xl font-bold text-sky-700">Rp 2.600.000</div>
         </div>
 
-        <button type="submit" id="submitBtn" class="w-full bg-sky-600 hover:bg-sky-700 text-white font-semibold py-3 rounded-lg transition shadow">
-          Kirim Permintaan Pemasangan
-        </button>
+        <div class="flex justify-end gap-2 pt-2">
+          <button type="button" onclick="closeModal()" class="px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-100 rounded-lg">Batal</button>
+          <button type="submit" id="saveOrderBtn" class="px-5 py-2 text-sm font-medium bg-sky-600 hover:bg-sky-700 text-white rounded-lg shadow">Simpan Proyek</button>
+        </div>
       </form>
     </div>
-
-  </main>
+  </div>
 
   <script>
-    // GANTI DENGAN CREDENTIALS SUPABASE KAMU
+    // ==========================================
+    // KONFIGURASI SUPABASE (GANTI SESUAI AKUNMU)
+    // ==========================================
     const SUPABASE_URL = 'https://YOUR_PROJECT_ID.supabase.co';
     const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    let currentTotal = 2600000;
+    let allOrders = [];
+    let currentFilter = 'ALL';
+    let currentRAB = 2600000;
 
-    function formatRupiah(angka) {
-      return 'Rp ' + angka.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+    function formatRupiah(num) {
+      return 'Rp ' + (num || 0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
     }
 
-    function calculateTotal() {
+    // Modal Controls
+    function openModal() {
+      document.getElementById('orderModal').classList.remove('hidden');
+      document.getElementById('orderModal').classList.add('flex');
+      calculateRAB();
+    }
+
+    function closeModal() {
+      document.getElementById('orderModal').classList.add('hidden');
+      document.getElementById('orderModal').classList.remove('flex');
+    }
+
+    function calculateRAB() {
       const select = document.getElementById('cameraType');
       const pricePerCam = parseInt(select.options[select.selectedIndex].getAttribute('data-price'));
       const count = parseInt(document.getElementById('cameraCount').value) || 0;
       const extraCable = parseInt(document.getElementById('cableLength').value) || 0;
 
-      currentTotal = (pricePerCam * count) + (extraCable * 8000);
-      document.getElementById('totalDisplay').innerText = formatRupiah(currentTotal);
+      currentRAB = (pricePerCam * count) + (extraCable * 8000);
+      document.getElementById('modalTotalDisplay').innerText = formatRupiah(currentRAB);
     }
 
-    document.getElementById('orderForm').addEventListener('submit', async (e) => {
+    // Filter Sidebar
+    function setFilter(status) {
+      currentFilter = status;
+      document.getElementById('activeFilterLabel').innerText = status === 'ALL' ? 'Semua Proyek' : status;
+
+      document.querySelectorAll('.nav-btn').forEach(btn => {
+        btn.classList.remove('bg-sky-600', 'text-white');
+        btn.classList.add('hover:bg-slate-800');
+      });
+
+      const activeBtn = document.getElementById(`nav-${status}`);
+      if (activeBtn) {
+        activeBtn.classList.add('bg-sky-600', 'text-white');
+        activeBtn.classList.remove('hover:bg-slate-800');
+      }
+
+      renderTable();
+    }
+
+    // Ambil Data dari Supabase
+    async function fetchOrders() {
+      const { data, error } = await supabaseClient
+        .from('cctv_orders')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        document.getElementById('ordersTableBody').innerHTML = `
+          <tr><td colspan="5" class="p-6 text-center text-red-500">Gagal memuat data: ${error.message}</td></tr>`;
+        return;
+      }
+
+      allOrders = data || [];
+      updateStats();
+      renderTable();
+    }
+
+    // Update KPI Cards & Sidebar Badges
+    function updateStats() {
+      const validOrders = allOrders.filter(o => o.status !== 'Batal');
+      const totalRevenue = validOrders.reduce((sum, o) => sum + (o.estimated_price || 0), 0);
+      const totalCameras = validOrders.reduce((sum, o) => sum + (o.camera_count || 0), 0);
+
+      const countBaru = allOrders.filter(o => o.status === 'Baru').length;
+      const countSurvei = allOrders.filter(o => o.status === 'Jadwal Survei').length;
+      const countPasang = allOrders.filter(o => o.status === 'Proses Pasang').length;
+      const countSelesai = allOrders.filter(o => o.status === 'Selesai').length;
+
+      document.getElementById('statRevenue').innerText = formatRupiah(totalRevenue);
+      document.getElementById('statCameras').innerText = `${totalCameras} Titik`;
+      document.getElementById('statPending').innerText = `${countBaru + countSurvei} Proyek`;
+      document.getElementById('statCompleted').innerText = `${countSelesai} Proyek`;
+
+      document.getElementById('badge-ALL').innerText = allOrders.length;
+      document.getElementById('badge-Baru').innerText = countBaru;
+      document.getElementById('badge-Survei').innerText = countSurvei;
+      document.getElementById('badge-Pasang').innerText = countPasang;
+      document.getElementById('badge-Selesai').innerText = countSelesai;
+    }
+
+    // Render Tabel dengan Filter & Pencarian
+    function renderTable() {
+      const query = document.getElementById('searchInput').value.toLowerCase();
+      const tbody = document.getElementById('ordersTableBody');
+
+      const filtered = allOrders.filter(order => {
+        const matchStatus = currentFilter === 'ALL' || order.status === currentFilter;
+        const matchSearch = 
+          order.customer_name.toLowerCase().includes(query) ||
+          order.location.toLowerCase().includes(query) ||
+          order.camera_type.toLowerCase().includes(query);
+        return matchStatus && matchSearch;
+      });
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5" class="p-8 text-center text-slate-400">Tidak ada data proyek yang sesuai.</td></tr>`;
+        return;
+      }
+
+      const statusColors = {
+        'Baru': 'bg-amber-50 text-amber-700 border-amber-200',
+        'Jadwal Survei': 'bg-purple-50 text-purple-700 border-purple-200',
+        'Proses Pasang': 'bg-sky-50 text-sky-700 border-sky-200',
+        'Selesai': 'bg-emerald-50 text-emerald-700 border-emerald-200',
+        'Batal': 'bg-rose-50 text-rose-700 border-rose-200'
+      };
+
+      tbody.innerHTML = filtered.map(order => {
+        const date = new Date(order.created_at).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' });
+        const waNumber = order.whatsapp.replace(/^0/, '62').replace(/[^0-9]/g, '');
+        const waText = encodeURIComponent(`Halo ${order.customer_name}, konfirmasi jadwal pemasangan CCTV (${order.camera_count} titik - ${order.camera_type}) di ${order.location} dengan estimasi ${formatRupiah(order.estimated_price)}.`);
+        const badgeClass = statusColors[order.status] || 'bg-slate-100 text-slate-700';
+
+        return `
+          <tr class="hover:bg-slate-50/80 transition">
+            <td class="py-3.5 px-4">
+              <div class="font-semibold text-slate-900">${order.customer_name}</div>
+              <div class="text-xs text-slate-500">${order.property_type} • ${order.location}</div>
+              <div class="text-[11px] text-slate-400 mt-0.5">Masuk: ${date}</div>
+              ${order.notes ? `<div class="text-[11px] text-amber-700 bg-amber-50 border border-amber-100 px-2 py-0.5 rounded mt-1 inline-block">${order.notes}</div>` : ''}
+            </td>
+            <td class="py-3.5 px-4">
+              <div class="font-medium text-slate-800">${order.camera_count} Titik Kamera</div>
+              <div class="text-xs text-slate-500">${order.camera_type}</div>
+              ${order.cable_length > 0 ? `<div class="text-[11px] text-slate-400">+ Ekstra Kabel ${order.cable_length}m</div>` : ''}
+            </td>
+            <td class="py-3.5 px-4 font-bold text-slate-900 whitespace-nowrap">
+              ${formatRupiah(order.estimated_price)}
+            </td>
+            <td class="py-3.5 px-4">
+              <select onchange="updateStatus('${order.id}', this.value)" class="border rounded-lg px-2.5 py-1.5 text-xs font-semibold cursor-pointer focus:outline-none ${badgeClass}">
+                <option value="Baru" ${order.status === 'Baru' ? 'selected' : ''}>Baru</option>
+                <option value="Jadwal Survei" ${order.status === 'Jadwal Survei' ? 'selected' : ''}>Jadwal Survei</option>
+                <option value="Proses Pasang" ${order.status === 'Proses Pasang' ? 'selected' : ''}>Proses Pasang</option>
+                <option value="Selesai" ${order.status === 'Selesai' ? 'selected' : ''}>Selesai</option>
+                <option value="Batal" ${order.status === 'Batal' ? 'selected' : ''}>Batal</option>
+              </select>
+            </td>
+            <td class="py-3.5 px-4 text-right whitespace-nowrap space-x-1.5">
+              <a href="https://wa.me/${waNumber}?text=${waText}" target="_blank" class="inline-flex items-center gap-1 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-medium px-3 py-1.5 rounded-lg transition">
+                WhatsApp
+              </a>
+              <button onclick="deleteOrder('${order.id}')" class="inline-flex items-center text-slate-400 hover:text-rose-600 p-1.5 rounded-lg hover:bg-rose-50 transition" title="Hapus Data">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+              </button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    // Simpan Order Baru dari Modal
+    document.getElementById('newOrderForm').addEventListener('submit', async (e) => {
       e.preventDefault();
-      const btn = document.getElementById('submitBtn');
+      const btn = document.getElementById('saveOrderBtn');
       btn.disabled = true;
-      btn.innerText = 'Mengirim data...';
+      btn.innerText = 'Menyimpan...';
 
       const payload = {
         customer_name: document.getElementById('customerName').value,
@@ -143,25 +461,52 @@
         camera_type: document.getElementById('cameraType').value,
         camera_count: parseInt(document.getElementById('cameraCount').value),
         cable_length: parseInt(document.getElementById('cableLength').value) || 0,
-        estimated_price: currentTotal,
-        notes: document.getElementById('notes').value
+        estimated_price: currentRAB,
+        notes: document.getElementById('notes').value,
+        status: 'Baru'
       };
 
       const { error } = await supabaseClient.from('cctv_orders').insert([payload]);
 
       if (error) {
-        alert('Gagal mengirim pesanan: ' + error.message);
+        alert('Gagal menyimpan: ' + error.message);
       } else {
-        alert('Terima kasih! Permintaan pemasangan CCTV Anda telah tercatat. Tim kami akan segera menghubungi via WhatsApp.');
-        document.getElementById('orderForm').reset();
-        calculateTotal();
+        document.getElementById('newOrderForm').reset();
+        closeModal();
+        fetchOrders();
       }
 
       btn.disabled = false;
-      btn.innerText = 'Kirim Permintaan Pemasangan';
+      btn.innerText = 'Simpan Proyek';
     });
 
-    calculateTotal();
+    // Update Status
+    async function updateStatus(id, newStatus) {
+      const { error } = await supabaseClient
+        .from('cctv_orders')
+        .update({ status: newStatus })
+        .eq('id', id);
+
+      if (error) {
+        alert('Gagal update status: ' + error.message);
+      } else {
+        fetchOrders();
+      }
+    }
+
+    // Hapus Order (Pastikan Policy DELETE aktif di Supabase)
+    async function deleteOrder(id) {
+      if (!confirm('Hapus data proyek ini secara permanen?')) return;
+      const { error } = await supabaseClient.from('cctv_orders').delete().eq('id', id);
+      if (error) {
+        alert('Gagal menghapus (cek RLS Policy DELETE di Supabase): ' + error.message);
+      } else {
+        fetchOrders();
+      }
+    }
+
+    // Load awal
+    fetchOrders();
   </script>
 </body>
 </html>
